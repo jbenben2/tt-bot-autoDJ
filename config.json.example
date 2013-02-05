@@ -1,0 +1,85 @@
+{"botinfo":       {
+	"auth":   "AUTHID",
+	"userid": "USERID",
+	"botname":"bot",
+	"laptop": "linux"
+},
+	"roomid":     "ROOOOM ID",
+	"admin":      "#####",
+	"database":   {
+		"usedb":     true,
+		"dbname":    "tt_bot",
+		"logchat":   true,
+		"tablenames":{
+			"song":   "SONGLIST",
+			"chat":   "CHATLOG",
+			"user":   "USERS",
+			"banned": "BANNEDUSERS",
+			"holiday":"HOLIDAY_GREETINGS"
+		},
+		"login":     {
+			"user":    "web_user",
+			"password":"web_app_user123",
+			"host":    "localhost"
+		}
+	},
+	"lastfm":     {
+		"useapi":   true,
+		"lastfmkey": "35c3d78dac6d8a59a98cc1d5703fd461"
+	},
+	"http":       {
+		"usehttp":true,
+		"port":   8181,
+		"host":   "localhost"
+	},
+	"responses":  {
+		"respond":        true,
+		"announcebonus":  true,
+		"reportsongstats":true,
+		"welcomeusers":   false,
+		"welcomepm":      false,
+		"alwayspm":       false,
+		"pmgreet":        "Welcome to Metal_Thursday!!! A once a week get together all for METAL!!!! . Type 'commands' to see a list of commands I can respond to.",
+		"greeting":       "Welcome, ",
+		"ownerresponse":  "jbenben2 made me!",
+		"sing":           true,
+		"rules":          {
+			"description":"No queue, fastest finger, play two songs and step down",
+			"link":       ""
+		}
+	},
+	"consolelog": false,
+	"bonusvote":  "VOTE",
+	"djing":      {
+		"botdj": false,
+		"minDjs":0,
+		"maxDjs":3
+	},
+	"enforcement":{
+		"enforceroom":false,
+		"waitlist":   false,
+		"songslimit": {
+			"limitsongs":false,
+			"maxsongs":  2,
+			"minDjs":    5
+		},
+		"stepuprules":{
+			"waittostepup":false,
+			"waittype":    "SONGS",
+			"length":      4
+		},
+		"ffarules":   {
+			"multiplespotffa":false,
+			"timerffa":       true,
+			"timeout":        10
+		},
+		"idle":       {
+			"idlerules":      false,
+			"idlewarntime":   10,
+			"idleremovaltime":12,
+			"minDjs":         5
+		}
+	},
+	"maintenance":{
+		"autorejoin":true
+	}}
