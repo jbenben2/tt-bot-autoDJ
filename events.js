@@ -363,12 +363,10 @@ exports.newSongEventHandler = function (data) {
         }
     }
 
-    var playlist_count = 0;
+    // Finds 2 similar songs via last.fm and searches turntable for them.
+    // then adds 1 of the first 5 responses to its playlist for each song.
     bot.playlistAll(function getcount(data){
-        playlist_count = data.list.length;
-    });
-
-    if(playlist_count < 25){
+        var playlist_count = data.list.length;
         request('http://ws.audioscrobbler.com/2.0/?method=track.getSimilar'
             + '&artist=' + encodeURIComponent(currentsong.artist)
             + '&track='  + encodeURIComponent(currentsong.song)
@@ -376,12 +374,15 @@ exports.newSongEventHandler = function (data) {
             function cbfunc(error, response, body) {
                 if(!error && response.statusCode == 200) {
                     var formatted = JSON.parse(body);
-                    
                     try {
                         for(var i = 2; i < formatted.similartracks.track.length; i++){
                             var query_string = formatted.similartracks.track[i].artist.name + ' ' + formatted.similartracks.track[i].name;
                             bot.searchSong(query_string, function callback(data){
-                                var random_song = parseInt(Math.random()*10);
+                                var random_remove_index = parseInt(Math.random()*25);
+                                if(playlist_count < 25){
+                                    bot.playlistRemove(random_remove_index);                                    
+                                }
+                                var random_song = parseInt(Math.random()*5);
                                 var random_playlist_index = parseInt(Math.random()*playlist_count);
                                 bot.playlistAdd(data.docs[random_song]._id, random_playlist_index);
                             }); 
@@ -390,8 +391,9 @@ exports.newSongEventHandler = function (data) {
                         //
                     }
                 }
-        });
-    }
+            }
+        );
+    });
 }
 
 //Runs when a dj steps down

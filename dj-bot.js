@@ -802,9 +802,6 @@ global.handleCommand = function(name, userid, text, source) {
 		}
 	}
 
-	if(text.toLowerCase().split(' ')[0] == 'artist'){
-		output({text: text.toLowerCase().split(' ')[1], destination:source, userid:userid});
-	}
 
 	if(text.toLowerCase() == (config.botinfo.botname + ' /skip')){
 		bot.skip();
@@ -824,5 +821,23 @@ global.handleCommand = function(name, userid, text, source) {
 		});
 	}
 
+	if(text.toLowerCase() == 'queue count'){
+		bot.playlistAll(function list_all(data){
+			output({text: data.list.length, destination:source, userid:userid});
+		});
+	}
+
+	if(text.toLowerCase() == config.botinfo.botname + ' clear 20'){
+	 	bot.playlistAll(function list_all(data){
+	 		var count = 20;
+	 		var list_length = data.list.length;
+	 		if (count > list_length){
+	 			count = list_length;
+	 		}
+	 		for(var i = 0; i < count; i++){
+	 			bot.playlistRemove(i);
+	 		}
+	 	});
+	}
 
 }
