@@ -18,14 +18,14 @@
 			"holiday":"HOLIDAY_GREETINGS"
 		},
 		"login":     {
-			"user":    "web_user",
-			"password":"web_app_user123",
+			"user":    "DB_USERNAME",
+			"password":"DB_PASSWORD",
 			"host":    "localhost"
 		}
 	},
 	"lastfm":     {
 		"useapi":   true,
-		"lastfmkey": "35c3d78dac6d8a59a98cc1d5703fd461"
+		"lastfmkey": "LASTFM_API_KEY"
 	},
 	"http":       {
 		"usehttp":true,
@@ -39,9 +39,9 @@
 		"welcomeusers":   false,
 		"welcomepm":      false,
 		"alwayspm":       false,
-		"pmgreet":        "Welcome to Metal_Thursday!!! A once a week get together all for METAL!!!! . Type 'commands' to see a list of commands I can respond to.",
-		"greeting":       "Welcome, ",
-		"ownerresponse":  "jbenben2 made me!",
+		"pmgreet":        "WELCOME",
+		"greeting":       "WELCOME",
+		"ownerresponse":  "",
 		"sing":           true,
 		"rules":          {
 			"description":"No queue, fastest finger, play two songs and step down",
