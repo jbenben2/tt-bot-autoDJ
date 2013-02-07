@@ -367,6 +367,7 @@ exports.newSongEventHandler = function (data) {
     // then adds 1 of the first 5 responses to its playlist for each song.
     bot.playlistAll(function getcount(data){
         var playlist_count = data.list.length;
+
         request('http://ws.audioscrobbler.com/2.0/?method=track.getSimilar'
             + '&artist=' + encodeURIComponent(currentsong.artist)
             + '&track='  + encodeURIComponent(currentsong.song)
@@ -378,13 +379,20 @@ exports.newSongEventHandler = function (data) {
                         for(var i = 2; i < formatted.similartracks.track.length; i++){
                             var query_string = formatted.similartracks.track[i].artist.name + ' ' + formatted.similartracks.track[i].name;
                             bot.searchSong(query_string, function callback(data){
-                                var random_remove_index = parseInt(Math.random()*25);
-                                if(playlist_count < 25){
-                                    bot.playlistRemove(random_remove_index);                                    
+                                if(data.docs.length > 0){
+                                    if(playlist_count >= 25){
+                                        var random_remove_index = parseInt(Math.random()*playlist_count);
+                                        bot.playlistRemove(random_remove_index);                                    
+                                    }
+                                    for(var j = 0; j < 5; j++){
+                                        var this_song_title = data.docs[j].metadata.song.toLowerCase();
+                                        if(this_song_title.indexOf('remix') == -1 && this_song_title.indexOf('karaoke') == -1){
+                                            var random_playlist_index = parseInt(Math.random()*playlist_count);
+                                            bot.playlistAdd(data.docs[j]._id, random_playlist_index);
+                                            break;
+                                        }
+                                    }
                                 }
-                                var random_song = parseInt(Math.random()*5);
-                                var random_playlist_index = parseInt(Math.random()*playlist_count);
-                                bot.playlistAdd(data.docs[random_song]._id, random_playlist_index);
                             }); 
                         }
                     } catch (e) {

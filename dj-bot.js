@@ -827,17 +827,28 @@ global.handleCommand = function(name, userid, text, source) {
 		});
 	}
 
-	if(text.toLowerCase() == config.botinfo.botname + ' clear 20'){
+	if(text.toLowerCase() == config.botinfo.botname + ' clear songs'){
 	 	bot.playlistAll(function list_all(data){
-	 		var count = 20;
 	 		var list_length = data.list.length;
-	 		if (count > list_length){
-	 			count = list_length;
-	 		}
-	 		for(var i = 0; i < count; i++){
-	 			bot.playlistRemove(i);
+	 		for(var i = 0; i < list_length; i++){
+	 			output({text: "Removing " + data.list[i].metadata.song, destination: source, userid: userid});
+	 			bot.playlistRemove(0);
 	 		}
 	 	});
+	}
+
+	if(text.toLowerCase().search(config.botinfo.botname + ' remove song ') == 0){
+		var length_of_command = (config.botinfo.botname + ' remove song ').length;
+		var song_title = text.toLowerCase().substr(length_of_command);
+		bot.playlistAll(function list(data){
+			for(var i = 0; i < data.list.length; i++){
+				if(data.list[i].metadata.song == song_title){
+					bot.playlistRemove(i);
+					break;
+				}
+			}
+		});
+
 	}
 
 }
