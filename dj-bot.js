@@ -279,6 +279,18 @@ global.setUpDatabase = function() {
 				throw error;
 			}
 		});
+
+		client.query('CREATE TABLE IF NOT EXISTS ' + config.database.dbname + '.' + config.database.tablenames.queue
+		+ '(id INT(11) AUTO_INCREMENT PRIMARY KEY,'
+		+ ' artist VARCHAR(255),'
+		+ ' song VARCHAR(255),'
+		+ ' songid VARCHAR(255),'
+		+ ' playlist_index INT(3))',	
+		function(error) {
+			if(error && error.number != 1050) {
+				throw error;
+			}
+		});
 }
 
 global.populateSongData = function(data) {
@@ -696,6 +708,46 @@ global.canUserStep = function(name, userid) {
 	//Default: Free to step up
 	return (name + ', go ahead!');
 };
+
+global.clear_current_playlist = function(){
+	client.query('TRUNCATE TABLE ' + config.database.tablenames.queue);
+};
+
+global.update_current_queue = function(data){
+	clear_current_playlist();
+	for(var i = 0; i < data.list.length; i++){
+		add_song_to_queue(data.list[i].metadata.artist, data.list[i].metadata.song, data.list[i]._id, i);
+	}
+};
+
+global.add_song_to_queue = function(artist, song, id, index){
+	client.query(
+		'INSERT INTO ' + config.database.dbname + '.' + config.database.tablenames.queue + ' '
+			+ 'SET artist = ?,song = ?, songid = ?, playlist_index = ?',[artist, song, id, index]
+	);
+};
+
+global.remove_song_from_queue = function(index){
+	client.query(
+		'DELETE FROM ' + config.database.dbname + '.' + config.database.tablenames.queue + ' '
+			+ 'WHERE index = ?', [index] 
+	);
+};
+
+global.check_current_song_in_playlist = function(){
+	client.query(
+	'SELECT * FROM ' + config.database.dbname + '.' + config.database.tablenames.queue + ' '
+		+ 'WHERE id = ? OR (artist like ? AND song list ?)',
+		[currentsong.id, "%" + currentsong.artist + "%", "%" + currentsong.song + "%"], 
+		function callback(error, results, fields){
+			if(results != null && results[0] != null) {
+				bot.playlistRemove(parseInt(results[0][playlist_index]));
+				bot.vote('up');
+			}
+		}
+	);
+};
+
 
 //Handles chat commands
 global.handleCommand = function(name, userid, text, source) {

@@ -3,9 +3,12 @@ exports.readyEventHandler = function (data) {
     setUpDatabase();
   }
 
+  //sets up current database holder of the queue for quick searches
+  bot.playlistAll(function list(data){
+    update_current_queue(data);
+  });
+
   loop();
-
-
 }
 
 //Runs when the room is changed.
@@ -349,6 +352,7 @@ exports.newSongEventHandler = function (data) {
     }
   }
  
+  check_current_song_in_playlist();
 
   // Finds 2 similar songs via last.fm and searches turntable for them.
   // then adds 1 of the first 5 responses to its playlist for each song.
@@ -388,6 +392,7 @@ exports.newSongEventHandler = function (data) {
         }
       }
     );
+    update_current_queue(data);
   });
 }
 
