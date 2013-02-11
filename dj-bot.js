@@ -141,19 +141,6 @@ function initializeModules() {
 
 	bot = new Bot(config.botinfo.auth, config.botinfo.userid, config.roomid);
 
-	//Loads bot singalongs
-	if(config.responses.sing) {
-		try {
-			singalong = require('./singalong.js');
-		} catch(e) {
-			console.log(e);
-			console.log('Ensure that singalong.js is present in this directory,'
-				+ ' or disable the botSing flag in config.js');
-			console.log('Starting bot without singalong functionality.');
-			config.responses.sing = false;
-		}
-	}
-
 	//Creates mysql db object
 	if(config.database.usedb) {
 		try {
@@ -214,7 +201,7 @@ function initializeModules() {
 		for(i in filenames) {
 			var command = require('./commands/' + filenames[i]);
 			commands.push({name:command.name, handler:command.handler, hidden:command.hidden,
-				enabled:        command.enabled, matchStart:command.matchStart});
+				enabled: command.enabled, matchStart:command.matchStart});
 		}
 	} catch(e) {
 		console.log('Unable to load command: ', e);
@@ -343,17 +330,11 @@ global.loop = function() {
 	}, 5000);
 }
 
-//TODO: Implement
-global.checkAuth = function(givenKey) {
-	return false;
-}
-
 global.isBot = function(id) {
 	return id == config.botinfo.userid;
 }
 
 global.checkAFK = function() {
-
 	if(djs.length >= config.enforcement.idle.minDjs) {
 		for(i in djs) {
 			if(!isBot(djs[i].id) &&  (new Date()) - djs[i].lastActivity > 1000 * 60 * config.enforcement.idle.idlewarntime) {
@@ -441,26 +422,19 @@ global.addToDb = function(data) {
 
 global.welcomeUser = function(name, id) {
 	//Ignore ttstats bots
-	if(!name.match(/^ttstats/)) {
-		if(id == '4f5628b9a3f7515810008122') {
-			bot.speak(':cat: <3 :wolf:');
-		}
-		else if(id == '4df0443f4fe7d0631905d6a8') {
-			bot.speak(':cat: <3 ' + name);
-		}
-		else if(config.database.usedb) {
-			client.query('SELECT greeting FROM ' + config.database.dbname + '.'
-				+ config.database.tablenames.holiday + ' WHERE date LIKE CURDATE()',
-				function cbfunc(error, results, fields) {
-					if(results != null && results[0] != null) {
-						bot.speak(results[0]['greeting'] + ', ' + name + '!');
-					} else {
-						bot.speak(config.responses.greeting + name + '!');
-					}
-				});
-		} else {
-			bot.speak(config.responses.greeting + name + '!');
-		}
+	if(!name.match(/^ttstats/) && config.database.usedb) {
+		client.query('SELECT greeting FROM ' + config.database.dbname + '.'
+			+ config.database.tablenames.holiday + ' WHERE date LIKE CURDATE()',
+			function cbfunc(error, results, fields) {
+				if(results != null && results[0] != null) {
+					bot.speak(results[0]['greeting'] + ', ' + name + '!');
+				} else {
+					bot.speak(config.responses.greeting + name + '!');
+				}
+			});
+	} 
+	else {
+		bot.speak(config.responses.greeting + name + '!');
 	}
 }
 
@@ -759,13 +733,6 @@ global.handleCommand = function(name, userid, text, source) {
 		}
 	}
 
-	if(text.toLowerCase() == (config.botinfo.botname + ', come back later')) {
-		if(userid == config.admin) {
-			bot.speak('I\'ll be back in ten minutes!');
-			bot.roomDeregister();
-			process.exit(34);
-		}
-	}
 
 	//Have the bot step up to DJ
 	if(text.toLowerCase() == (config.botinfo.botname + ' step up')) {
